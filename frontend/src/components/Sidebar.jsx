@@ -98,6 +98,7 @@ function Sidebar() {
             <Link
               key={index}
               to={menu.path}
+              onClick={() => setIsOpen(false)}
               className={`w-full flex items-center gap-4 p-4 rounded-2xl font-semibold transition-all ${
                 location.pathname === menu.path
                   ? "bg-blue-50 text-blue-600"
