@@ -11,10 +11,11 @@ import {
   useLocation,
 } from "react-router-dom";
 
-
+import { useSidebar } from "../context/useSidebar";
 function Sidebar() {
 
   const location = useLocation();
+  const { isOpen, setIsOpen } = useSidebar();
 
 
   const menus = [
@@ -53,7 +54,19 @@ function Sidebar() {
 
   return (
 
-    <div className="hidden lg:flex w-[260px] h-screen sticky top-0 bg-white border-r border-gray-100 flex-col justify-between p-6">
+    <>
+  {isOpen && (
+    <div
+      className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+      onClick={() => setIsOpen(false)}
+    />
+  )}
+
+  <div
+    className={`fixed lg:sticky top-0 left-0 z-50 w-[260px] h-screen bg-white border-r border-gray-100 flex flex-col justify-between p-6 transform transition-transform duration-300 ${
+      isOpen ? "translate-x-0" : "-translate-x-full"
+    } lg:translate-x-0`}
+  >
 
       <div>
 
@@ -127,8 +140,8 @@ function Sidebar() {
         </p>
 
       </div>
-
-    </div>
+</div>
+  </>
   );
 }
 

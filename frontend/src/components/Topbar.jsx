@@ -5,6 +5,7 @@ import {
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useSidebar } from "../context/useSidebar";
 
 function Topbar() {
 
@@ -22,6 +23,7 @@ function Topbar() {
     useState(
       localStorage.getItem("profilePic")
     );
+  const { setIsOpen } = useSidebar();
 
   useEffect(() => {
 
@@ -103,11 +105,12 @@ setTimeout(() => {
 
       <div className="flex items-center gap-4">
 
-        <button className="lg:hidden bg-white p-3 rounded-2xl border border-gray-100">
-
-          <Menu size={22} />
-
-        </button>
+        <button
+  onClick={() => setIsOpen(true)}
+  className="lg:hidden bg-white p-3 rounded-2xl border border-gray-100"
+>
+  <Menu size={22} />
+</button>
 
         {/* PROFILE */}
 

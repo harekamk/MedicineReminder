@@ -8,11 +8,12 @@ import Medicines from "./pages/Medicines";
 import History from "./pages/History";
 import Pharmacies from "./pages/Pharmacies";
 import Settings from "./pages/Settings";
+import { SidebarProvider } from "./context/SidebarContext";
 
 function App() {
 
   return (
-
+    <SidebarProvider>
     <Routes>
 
       <Route
@@ -71,6 +72,7 @@ function App() {
   />
 
     </Routes>
+    </SidebarProvider>
   );
 }
 

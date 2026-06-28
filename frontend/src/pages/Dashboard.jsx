@@ -393,7 +393,7 @@ toast.error(
           />
         )}
 
-        <div className="grid grid-cols-[minmax(0,1fr)_320px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6">
 
           {/* LEFT */}
 
@@ -509,7 +509,7 @@ toast.error(
 
           {/* RIGHT */}
 
-          <div className="w-[320px] shrink-0">
+          <div className="w-full lg:w-[320px] shrink-0">
 
             <ExpiryAlerts
               medicines={medicines}
