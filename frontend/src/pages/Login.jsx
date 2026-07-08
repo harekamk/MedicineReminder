@@ -3,15 +3,39 @@ import API from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-function Login() {
+const Spinner = () => (
+  <svg
+    className="animate-spin h-5 w-5"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+  >
+    <circle
+      className="opacity-25"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      strokeWidth="4"
+    />
+    <path
+      className="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8V0C6.477 0 2 4.477 2 10h2z"
+    />
+  </svg>
+);
 
+function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
   const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -20,38 +44,33 @@ function Login() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (loading) return;
+    if (loading) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const res = await API.post("/auth/login", formData);
+    try {
+      const res = await API.post("/auth/login", formData);
 
-    localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.data.token);
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify(res.data.user)
-    );
+      localStorage.setItem(
+        "user",
+        JSON.stringify(res.data.user)
+      );
 
-    toast.success("Login Successful");
+      toast.success("Login Successful");
 
-    navigate("/dashboard");
+      navigate("/dashboard");
+    } catch (error) {
+      console.log(error);
 
-  } catch (error) {
-
-    console.log(error);
-
-    toast.error("Invalid Email or Password");
-
-  } finally {
-
-    setLoading(false);
-
-  }
-};
+      toast.error("Invalid Email or Password");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -69,36 +88,53 @@ function Login() {
           type="email"
           name="email"
           placeholder="Email"
-          className="w-full border p-3 mb-4 rounded"
+          value={formData.email}
+          disabled={loading}
           onChange={handleChange}
+          className="w-full border p-3 mb-4 rounded disabled:bg-gray-100 disabled:cursor-not-allowed"
+          required
         />
 
         <input
           type="password"
           name="password"
           placeholder="Password"
-          className="w-full border p-3 mb-4 rounded"
+          value={formData.password}
+          disabled={loading}
           onChange={handleChange}
+          className="w-full border p-3 mb-4 rounded disabled:bg-gray-100 disabled:cursor-not-allowed"
+          required
         />
 
         <button
-  type="submit"
-  disabled={loading}
-  className={`w-full p-3 rounded text-white transition-all duration-200 ${
-    loading
-      ? "bg-blue-400 opacity-70 cursor-not-allowed blur-[0.5px]"
-      : "bg-blue-500 hover:bg-blue-600"
-  }`}
->
-  {loading ? "Logging in..." : "Login"}
-</button>
+          type="submit"
+          disabled={loading}
+          className={`w-full h-12 rounded-lg font-semibold text-white transition-all duration-300 flex items-center justify-center gap-2 ${
+            loading
+              ? "bg-blue-400 opacity-80 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 active:scale-95"
+          }`}
+        >
+          {loading ? (
+            <>
+              <Spinner />
+              Logging in...
+            </>
+          ) : (
+            "Login"
+          )}
+        </button>
 
         <p className="mt-4 text-center">
           Don't have an account?
 
           <Link
-            to="/signup"
-            className="text-blue-500 ml-1"
+            to={loading ? "#" : "/signup"}
+            className={`ml-1 transition-colors ${
+              loading
+                ? "text-gray-400 pointer-events-none"
+                : "text-blue-500 hover:underline"
+            }`}
           >
             Signup
           </Link>
