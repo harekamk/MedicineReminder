@@ -11,7 +11,7 @@ function Login() {
     email: "",
     password: "",
   });
-
+  const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -20,35 +20,38 @@ function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
+  if (loading) return;
 
-      const res = await API.post(
-        "/auth/login",
-        formData
-      );
+  setLoading(true);
 
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
-      localStorage.setItem(
-        "user",
-         JSON.stringify(res.data.user)
-);
+  try {
+    const res = await API.post("/auth/login", formData);
 
-      toast.success("Login Successful");
+    localStorage.setItem("token", res.data.token);
 
-      navigate("/dashboard");
+    localStorage.setItem(
+      "user",
+      JSON.stringify(res.data.user)
+    );
 
-    } catch (error) {
+    toast.success("Login Successful");
 
-      console.log(error);
+    navigate("/dashboard");
 
-      toast.error("Invalid Email or Password");
-    }
-  };
+  } catch (error) {
+
+    console.log(error);
+
+    toast.error("Invalid Email or Password");
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -79,10 +82,16 @@ function Login() {
         />
 
         <button
-          className="w-full bg-blue-500 text-white p-3 rounded"
-        >
-          Login
-        </button>
+  type="submit"
+  disabled={loading}
+  className={`w-full p-3 rounded text-white transition-all duration-200 ${
+    loading
+      ? "bg-blue-400 opacity-70 cursor-not-allowed blur-[0.5px]"
+      : "bg-blue-500 hover:bg-blue-600"
+  }`}
+>
+  {loading ? "Logging in..." : "Login"}
+</button>
 
         <p className="mt-4 text-center">
           Don't have an account?

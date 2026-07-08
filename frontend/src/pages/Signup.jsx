@@ -13,6 +13,7 @@ function Signup() {
     phoneNumber: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -22,34 +23,45 @@ function Signup() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
+  if (loading) return;
 
-      const res = await API.post(
-        "/auth/register",
-        formData
-      );
+  setLoading(true);
 
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
-      localStorage.setItem(
-  "user",
-  JSON.stringify(res.data.user)
-);
+  try {
 
-      toast.success("Signup Successful");
+    const res = await API.post(
+      "/auth/register",
+      formData
+    );
 
-      navigate("/dashboard");
+    localStorage.setItem(
+      "token",
+      res.data.token
+    );
 
-    } catch (error) {
-      console.log(error);
+    localStorage.setItem(
+      "user",
+      JSON.stringify(res.data.user)
+    );
 
-      toast.error("Signup Failed");
-    }
-  };
+    toast.success("Signup Successful");
+
+    navigate("/dashboard");
+
+  } catch (error) {
+
+    console.log(error);
+
+    toast.error("Signup Failed");
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -95,10 +107,16 @@ function Signup() {
         />
 
         <button
-          className="w-full bg-blue-500 text-white p-3 rounded"
-        >
-          Signup
-        </button>
+  type="submit"
+  disabled={loading}
+  className={`w-full p-3 rounded text-white transition-all duration-200 ${
+    loading
+      ? "bg-blue-400 opacity-70 cursor-not-allowed blur-[0.5px]"
+      : "bg-blue-500 hover:bg-blue-600"
+  }`}
+>
+  {loading ? "Signing up..." : "Signup"}
+</button>
 
         <p className="mt-4 text-center">
           Already have an account?
