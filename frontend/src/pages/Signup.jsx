@@ -66,10 +66,12 @@ function Signup() {
 
       navigate("/dashboard");
     } catch (error) {
-      console.log(error);
+  console.log(error);
 
-      toast.error("Signup Failed");
-    } finally {
+  toast.error(
+    error.response?.data?.message || "Signup Failed"
+  );
+}finally {
       setLoading(false);
     }
   };
