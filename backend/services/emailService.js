@@ -1,13 +1,6 @@
 require("dotenv").config();
 
-const brevo = require("@getbrevo/brevo");
-
-const apiInstance = new brevo.TransactionalEmailsApi();
-
-apiInstance.setApiKey(
-  brevo.TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY
-);
+const axios = require("axios");
 
 const sendReminderEmail = async (
   email,
@@ -17,37 +10,44 @@ const sendReminderEmail = async (
   try {
     console.log("📧 Sending reminder email to:", email);
 
-    const sendSmtpEmail = {
-      sender: {
-        name: "Medicine Reminder",
-        email: "iamghazal.3746@gmail.com",
-      },
-
-      to: [
-        {
-          email: email,
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          name: "Medicine Reminder",
+          email: "iamghazal.3746@gmail.com", // Your verified Brevo sender
         },
-      ],
 
-      subject: "💊 Medicine Reminder",
+        to: [
+          {
+            email: email,
+          },
+        ],
 
-      htmlContent: `
-        <html>
-          <body style="font-family:Arial,sans-serif">
+        subject: "💊 Medicine Reminder",
 
-            <h2>💊 Medicine Reminder</h2>
+        htmlContent: `
+          <div style="font-family: Arial, sans-serif; padding:20px;">
+
+            <h2 style="color:#2563eb;">
+              💊 Medicine Reminder
+            </h2>
 
             <p>Hello,</p>
 
-            <p>It's time to take your medicine.</p>
+            <p>
+              It's time to take your medicine.
+            </p>
+
+            <hr>
 
             <p>
-              <b>Medicine:</b>
+              <strong>Medicine:</strong>
               ${medicineName}
             </p>
 
             <p>
-              <b>Dosage:</b>
+              <strong>Dosage:</strong>
               ${dosage}
             </p>
 
@@ -57,38 +57,30 @@ const sendReminderEmail = async (
               Stay Healthy ❤️
             </p>
 
-          </body>
-        </html>
-      `,
-    };
-
-    const response =
-      await apiInstance.sendTransacEmail(
-        sendSmtpEmail
-      );
-
-    console.log(
-      "✅ Email sent successfully"
+          </div>
+        `,
+      },
+      {
+        headers: {
+          accept: "application/json",
+          "api-key": process.env.BREVO_API_KEY,
+          "content-type": "application/json",
+        },
+      }
     );
 
-    console.log(response.body);
+    console.log("✅ Email Sent Successfully");
+    console.log(response.data);
 
     return true;
-
   } catch (error) {
-
-    console.log(
-      "❌ Brevo Email Error"
-    );
+    console.log("❌ Brevo Email Error");
 
     if (error.response) {
-
-      console.log(error.response.body);
-
+      console.log(error.response.status);
+      console.log(error.response.data);
     } else {
-
-      console.log(error);
-
+      console.log(error.message);
     }
 
     return false;
