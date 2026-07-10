@@ -2,10 +2,13 @@ require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 console.log("EMAIL_USER =", process.env.EMAIL_USER);
-console.log("EMAIL_PASS =", process.env.EMAIL_PASS ? "Loaded ✅" : "Missing ❌");
+console.log(
+  "EMAIL_PASS =",
+  process.env.EMAIL_PASS ? "Loaded ✅" : "Missing ❌"
+);
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp-relay.brevo.com",
   port: 587,
   secure: false,
 
@@ -24,7 +27,7 @@ transporter.verify((error) => {
     console.error("❌ SMTP Verify Failed");
     console.error(error);
   } else {
-    console.log("✅ SMTP Ready");
+    console.log("✅ Brevo SMTP Ready");
   }
 });
 
@@ -34,29 +37,23 @@ const sendReminderEmail = async (
   dosage
 ) => {
   try {
-    console.log("====================================");
-    console.log("📧 Sending Reminder Email");
-    console.log("To:", email);
-    console.log("Medicine:", medicineName);
-    console.log("Dosage:", dosage);
+    console.log("📧 Sending reminder to:", email);
 
     const info = await transporter.sendMail({
-      from: `"Medicine Reminder" <${process.env.EMAIL_USER}>`,
+      from: `"Medicine Reminder" <iamghazal.3746@gmail.com>`,
+
       to: email,
+
       subject: "💊 Medicine Reminder",
+
       html: `
-        <h2>Medicine Reminder</h2>
+        <h2>Medicine Reminder 💊</h2>
+
         <p>It's time to take your medicine.</p>
 
-        <p>
-          <strong>Medicine:</strong>
-          ${medicineName}
-        </p>
+        <p><strong>Medicine:</strong> ${medicineName}</p>
 
-        <p>
-          <strong>Dosage:</strong>
-          ${dosage}
-        </p>
+        <p><strong>Dosage:</strong> ${dosage}</p>
 
         <br/>
 
@@ -66,8 +63,6 @@ const sendReminderEmail = async (
 
     console.log("✅ Email Sent Successfully");
     console.log(info);
-
-    transporter.close();
 
     return true;
 
