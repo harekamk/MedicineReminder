@@ -2,12 +2,13 @@ require("dotenv").config();
 
 const SibApiV3Sdk = require("sib-api-v3-sdk");
 
-const defaultClient = SibApiV3Sdk.ApiClient.instance;
+const client = SibApiV3Sdk.ApiClient.instance;
 
-defaultClient.authentications["api-key"].apiKey =
+client.authentications["api-key"].apiKey =
   process.env.BREVO_API_KEY;
 
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+const apiInstance =
+  new SibApiV3Sdk.TransactionalEmailsApi();
 
 const sendReminderEmail = async (
   email,
@@ -15,45 +16,46 @@ const sendReminderEmail = async (
   dosage
 ) => {
   try {
-    console.log("📧 Sending email to:", email);
+    console.log("📧 Sending reminder email to:", email);
 
-    const result = await apiInstance.sendTransacEmail({
-      sender: {
-        email: "iamghazal.3746@gmail.com",
-        name: "Medicine Reminder",
-      },
-
-      to: [
-        {
-          email: email,
+    const result =
+      await apiInstance.sendTransacEmail({
+        sender: {
+          name: "Medicine Reminder",
+          email: "iamghazal.3746@gmail.com",
         },
-      ],
 
-      subject: "💊 Medicine Reminder",
+        to: [
+          {
+            email: email,
+          },
+        ],
 
-      htmlContent: `
-        <h2>Medicine Reminder 💊</h2>
+        subject: "💊 Medicine Reminder",
 
-        <p>It's time to take your medicine.</p>
+        htmlContent: `
+          <h2>Medicine Reminder 💊</h2>
 
-        <p><strong>Medicine:</strong> ${medicineName}</p>
+          <p>It's time to take your medicine.</p>
 
-        <p><strong>Dosage:</strong> ${dosage}</p>
+          <p><b>Medicine:</b> ${medicineName}</p>
 
-        <br>
+          <p><b>Dosage:</b> ${dosage}</p>
 
-        <p>Stay Healthy ❤️</p>
-      `,
-    });
+          <br>
 
-    console.log("✅ Email Sent Successfully");
+          <p>Stay Healthy ❤️</p>
+        `,
+      });
+
+    console.log("✅ Email Sent");
     console.log(result);
 
     return true;
 
   } catch (error) {
 
-    console.error("❌ Email Sending Failed");
+    console.error("❌ Brevo Error");
 
     if (error.response) {
       console.error(error.response.body);
