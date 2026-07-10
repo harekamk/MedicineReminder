@@ -1,8 +1,13 @@
 require("dotenv").config();
 
-const { Resend } = require("resend");
+const brevo = require("@getbrevo/brevo");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const apiInstance = new brevo.TransactionalEmailsApi();
+
+apiInstance.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
 
 const sendReminderEmail = async (
   email,
@@ -10,41 +15,81 @@ const sendReminderEmail = async (
   dosage
 ) => {
   try {
-    console.log("📧 Sending email to:", email);
+    console.log("📧 Sending reminder email to:", email);
 
-    const { data, error } = await resend.emails.send({
-      from: "Medicine Reminder <onboarding@resend.dev>",
-      to: email,
+    const sendSmtpEmail = {
+      sender: {
+        name: "Medicine Reminder",
+        email: "iamghazal.3746@gmail.com",
+      },
+
+      to: [
+        {
+          email: email,
+        },
+      ],
+
       subject: "💊 Medicine Reminder",
-      html: `
-        <h2>Medicine Reminder 💊</h2>
 
-        <p>It's time to take your medicine.</p>
+      htmlContent: `
+        <html>
+          <body style="font-family:Arial,sans-serif">
 
-        <p><strong>Medicine:</strong> ${medicineName}</p>
+            <h2>💊 Medicine Reminder</h2>
 
-        <p><strong>Dosage:</strong> ${dosage}</p>
+            <p>Hello,</p>
 
-        <br/>
+            <p>It's time to take your medicine.</p>
 
-        <p>Stay Healthy ❤️</p>
+            <p>
+              <b>Medicine:</b>
+              ${medicineName}
+            </p>
+
+            <p>
+              <b>Dosage:</b>
+              ${dosage}
+            </p>
+
+            <br>
+
+            <p>
+              Stay Healthy ❤️
+            </p>
+
+          </body>
+        </html>
       `,
-    });
+    };
 
-    if (error) {
-      console.error("❌ Resend Error:", error);
-      return false;
-    }
+    const response =
+      await apiInstance.sendTransacEmail(
+        sendSmtpEmail
+      );
 
-    console.log("✅ Email Sent Successfully");
-    console.log(data);
+    console.log(
+      "✅ Email sent successfully"
+    );
+
+    console.log(response.body);
 
     return true;
 
-  } catch (err) {
+  } catch (error) {
 
-    console.error("❌ Email Sending Failed");
-    console.error(err);
+    console.log(
+      "❌ Brevo Email Error"
+    );
+
+    if (error.response) {
+
+      console.log(error.response.body);
+
+    } else {
+
+      console.log(error);
+
+    }
 
     return false;
   }
