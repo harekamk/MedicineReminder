@@ -1,14 +1,8 @@
 require("dotenv").config();
 
-const SibApiV3Sdk = require("sib-api-v3-sdk");
+const { Resend } = require("resend");
 
-const client = SibApiV3Sdk.ApiClient.instance;
-
-client.authentications["api-key"].apiKey =
-  process.env.BREVO_API_KEY;
-
-const apiInstance =
-  new SibApiV3Sdk.TransactionalEmailsApi();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendReminderEmail = async (
   email,
@@ -16,52 +10,41 @@ const sendReminderEmail = async (
   dosage
 ) => {
   try {
-    console.log("📧 Sending reminder email to:", email);
+    console.log("📧 Sending email to:", email);
 
-    const result =
-      await apiInstance.sendTransacEmail({
-        sender: {
-          name: "Medicine Reminder",
-          email: "iamghazal.3746@gmail.com",
-        },
+    const { data, error } = await resend.emails.send({
+      from: "Medicine Reminder <onboarding@resend.dev>",
+      to: email,
+      subject: "💊 Medicine Reminder",
+      html: `
+        <h2>Medicine Reminder 💊</h2>
 
-        to: [
-          {
-            email: email,
-          },
-        ],
+        <p>It's time to take your medicine.</p>
 
-        subject: "💊 Medicine Reminder",
+        <p><strong>Medicine:</strong> ${medicineName}</p>
 
-        htmlContent: `
-          <h2>Medicine Reminder 💊</h2>
+        <p><strong>Dosage:</strong> ${dosage}</p>
 
-          <p>It's time to take your medicine.</p>
+        <br/>
 
-          <p><b>Medicine:</b> ${medicineName}</p>
+        <p>Stay Healthy ❤️</p>
+      `,
+    });
 
-          <p><b>Dosage:</b> ${dosage}</p>
+    if (error) {
+      console.error("❌ Resend Error:", error);
+      return false;
+    }
 
-          <br>
-
-          <p>Stay Healthy ❤️</p>
-        `,
-      });
-
-    console.log("✅ Email Sent");
-    console.log(result);
+    console.log("✅ Email Sent Successfully");
+    console.log(data);
 
     return true;
 
-  } catch (error) {
+  } catch (err) {
 
-    console.error("❌ Brevo Error");
-
-    if (error.response) {
-      console.error(error.response.body);
-    } else {
-      console.error(error);
-    }
+    console.error("❌ Email Sending Failed");
+    console.error(err);
 
     return false;
   }
