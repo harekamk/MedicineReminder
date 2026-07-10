@@ -14,22 +14,29 @@ function MedicineCard({
 
 }) {
 
-  const fullDate = `${new Date().getFullYear()}-${
-  String(new Date().getMonth() + 1).padStart(2, "0")
-}-${String(selectedDate).padStart(2, "0")}`;
+ const today = new Date();
+
+const fullDate = `${today.getFullYear()}-${String(
+  today.getMonth() + 1
+).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
 
   const completed =
     medicine.completedDoses?.includes(
       fullDate
     );
 
-  const expiryDiff = Math.ceil(
+  const expiry = new Date(
+  medicine.expiryDate + "T00:00:00"
+);
 
-    (new Date(medicine.expiryDate) -
-      new Date()) /
+const todayDate = new Date();
 
-    (1000 * 60 * 60 * 24)
-  );
+todayDate.setHours(0,0,0,0);
+
+const expiryDiff = Math.ceil(
+  (expiry - todayDate) /
+  (1000 * 60 * 60 * 24)
+);
 
   let status = "Safe";
 
@@ -69,12 +76,11 @@ function MedicineCard({
 
   return (
 
-    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center justify-between">
+    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex justify-between items-center gap-6">
 
       {/* LEFT */}
 
-      <div className="flex items-center gap-5">
-
+<div className="flex items-center gap-5 flex-1">
         <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
 
           💊
@@ -127,12 +133,12 @@ function MedicineCard({
 
             <p className="text-gray-400 text-sm">
 
-              Exp:{" "}
-              {new Date(
-                medicine.expiryDate
-              ).toLocaleDateString()}
+  Exp:{" "}
+  {new Date(
+    medicine.expiryDate + "T00:00:00"
+  ).toLocaleDateString()}
 
-            </p>
+</p>
 
           </div>
 

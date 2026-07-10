@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@getbrevo/brevo": "^6.0.2",
+    "axios": "^1.18.1",
     "sib-api-v3-sdk": "^8.5.0"
   }
 }

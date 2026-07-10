@@ -7,18 +7,13 @@ function CalendarSection({
 }) {
   const today = new Date();
 
-  const currentMonth = today.toLocaleString(
-    "default",
-    {
-      month: "long",
-    }
-  );
+  const currentMonth = today.toLocaleString("default", {
+    month: "long",
+  });
 
-  const currentYear =
-    today.getFullYear();
+  const currentYear = today.getFullYear();
 
-  const currentDate =
-    today.getDate().toString();
+  const currentDate = today.getDate().toString();
 
   const daysInMonth = new Date(
     currentYear,
@@ -38,95 +33,83 @@ function CalendarSection({
       today.getMonth() + 1
     ).padStart(2, "0");
 
-    const day = String(
-      date
-    ).padStart(2, "0");
+    const day = String(date).padStart(2, "0");
 
-    const fullDate =
-      currentYear +
-      "-" +
-      month +
-      "-" +
-      day;
+    const fullDate = `${currentYear}-${month}-${day}`;
 
     const dayDate = new Date(
       currentYear,
       today.getMonth(),
       date
     );
+    dayDate.setHours(0, 0, 0, 0);
 
-    const todayDate = new Date(
-      currentYear,
-      today.getMonth(),
-      today.getDate()
-    );
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
 
-    const medicinesForDay =
-      medicines.filter(
-        (medicine) => {
-          if (
-            !medicine.startDate ||
-            !medicine.duration
-          ) {
-            return false;
-          }
+    const medicinesForDay = medicines.filter((medicine) => {
+      if (!medicine.startDate || !medicine.duration)
+        return false;
 
-          const start =
-            new Date(
-              medicine.startDate
-            );
+      const start = new Date(
+        medicine.startDate + "T00:00:00"
+      );
+      start.setHours(0, 0, 0, 0);
 
-          const end =
-            new Date(
-              medicine.startDate
-            );
+      const end = new Date(start);
 
-          end.setDate(
-            end.getDate() +
-              Number(
-                medicine.duration
-              ) -
-              1
-          );
-
-          return (
-            dayDate >= start &&
-            dayDate <= end
-          );
-        }
+      end.setDate(
+        end.getDate() +
+          Number(medicine.duration) -
+          1
       );
 
-    if (
-      medicinesForDay.length === 0
-    ) {
+      end.setHours(23, 59, 59, 999);
+
+      return (
+        dayDate >= start &&
+        dayDate <= end
+      );
+    });
+
+    // No medicines
+    if (medicinesForDay.length === 0) {
       return "bg-gray-300";
     }
 
-    if (
-      dayDate > todayDate
-    ) {
+    // Future medicines
+    if (dayDate > todayDate) {
       return "bg-blue-500";
     }
 
-    const allCompleted =
-      medicinesForDay.every(
-        (medicine) =>
-          medicine.completedDoses?.includes(
-            fullDate
-          )
-      );
+    const completedCount =
+      medicinesForDay.filter((medicine) =>
+        medicine.completedDoses?.includes(
+          fullDate
+        )
+      ).length;
 
-    return allCompleted
-      ? "bg-green-500"
-      : "bg-red-500";
+    // All completed
+    if (
+      completedCount ===
+      medicinesForDay.length
+    ) {
+      return "bg-green-500";
+    }
+
+    // Any pending
+    return "bg-red-500";
   };
 
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 overflow-hidden">
+
       {/* HEADER */}
 
       <div className="flex justify-between items-center mb-6">
+
         <div>
+
           <h2 className="text-2xl font-bold text-gray-800">
             {currentMonth}
           </h2>
@@ -134,39 +117,37 @@ function CalendarSection({
           <p className="text-gray-500">
             {currentYear}
           </p>
+
         </div>
 
         <button
           onClick={() =>
-            setSelectedDate(
-              currentDate
-            )
+            setSelectedDate(currentDate)
           }
           className="bg-blue-100 text-blue-600 px-4 py-2 rounded-xl font-medium hover:bg-blue-200 transition-all"
         >
           Today
         </button>
+
       </div>
 
       {/* DATE STRIP */}
 
       <div className="flex gap-3 overflow-x-auto pb-3">
+
         {dates.map((date) => {
-          const dateObj =
-            new Date(
-              currentYear,
-              today.getMonth(),
-              date
-            );
+
+          const dateObj = new Date(
+            currentYear,
+            today.getMonth(),
+            date
+          );
 
           const dayName =
             dateObj
-              .toLocaleDateString(
-                "en-US",
-                {
-                  weekday: "short",
-                }
-              )
+              .toLocaleDateString("en-US", {
+                weekday: "short",
+              })
               .toUpperCase();
 
           const isSelected =
@@ -178,6 +159,7 @@ function CalendarSection({
             date.toString();
 
           return (
+
             <div
               key={date}
               onClick={() =>
@@ -193,6 +175,7 @@ function CalendarSection({
                   : "bg-gray-50 hover:bg-blue-50"
               }`}
             >
+
               <h2 className="text-xl font-bold">
                 {date}
               </h2>
@@ -211,22 +194,24 @@ function CalendarSection({
                 className={`w-2 h-2 rounded-full mx-auto mt-3 ${
                   isSelected
                     ? "bg-white"
-                    : getDotColor(
-                        date
-                      )
+                    : getDotColor(date)
                 }`}
               ></div>
+
             </div>
+
           );
+
         })}
+
       </div>
 
       {/* FOOTER */}
 
       <div className="mt-5 flex gap-6 flex-wrap">
+
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-
           <p className="text-sm text-gray-500">
             Completed
           </p>
@@ -234,7 +219,6 @@ function CalendarSection({
 
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-
           <p className="text-sm text-gray-500">
             Missed
           </p>
@@ -242,7 +226,6 @@ function CalendarSection({
 
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-
           <p className="text-sm text-gray-500">
             Upcoming
           </p>
@@ -250,12 +233,13 @@ function CalendarSection({
 
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
-
           <p className="text-sm text-gray-500">
             No Medicines
           </p>
         </div>
+
       </div>
+
     </div>
   );
 }

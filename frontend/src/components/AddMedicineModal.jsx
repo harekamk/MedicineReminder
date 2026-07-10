@@ -77,10 +77,8 @@ function AddMedicineModal({
           <div>
 
             <h2 className="text-3xl font-bold">
-
-              Add Medicine
-
-            </h2>
+{formData._id ? "Edit Medicine" : "Add Medicine"}
+</h2>
 
             <p className="text-gray-500">
 
@@ -263,7 +261,7 @@ function AddMedicineModal({
             className="md:col-span-2 bg-blue-500 text-white py-4 rounded-2xl font-bold"
           >
 
-            Save Medicine
+            {formData._id ? "Update Medicine" : "Save Medicine"}
 
           </button>
 
