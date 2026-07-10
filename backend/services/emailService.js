@@ -1,35 +1,13 @@
 require("dotenv").config();
-const nodemailer = require("nodemailer");
 
-console.log("EMAIL_USER =", process.env.EMAIL_USER);
-console.log(
-  "EMAIL_PASS =",
-  process.env.EMAIL_PASS ? "Loaded ✅" : "Missing ❌"
-);
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
 
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+defaultClient.authentications["api-key"].apiKey =
+  process.env.BREVO_API_KEY;
 
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-});
-
-transporter.verify((error) => {
-  if (error) {
-    console.error("❌ SMTP Verify Failed");
-    console.error(error);
-  } else {
-    console.log("✅ Brevo SMTP Ready");
-  }
-});
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 const sendReminderEmail = async (
   email,
@@ -37,16 +15,23 @@ const sendReminderEmail = async (
   dosage
 ) => {
   try {
-    console.log("📧 Sending reminder to:", email);
+    console.log("📧 Sending email to:", email);
 
-    const info = await transporter.sendMail({
-      from: `"Medicine Reminder" <iamghazal.3746@gmail.com>`,
+    const result = await apiInstance.sendTransacEmail({
+      sender: {
+        email: "iamghazal.3746@gmail.com",
+        name: "Medicine Reminder",
+      },
 
-      to: email,
+      to: [
+        {
+          email: email,
+        },
+      ],
 
       subject: "💊 Medicine Reminder",
 
-      html: `
+      htmlContent: `
         <h2>Medicine Reminder 💊</h2>
 
         <p>It's time to take your medicine.</p>
@@ -55,14 +40,14 @@ const sendReminderEmail = async (
 
         <p><strong>Dosage:</strong> ${dosage}</p>
 
-        <br/>
+        <br>
 
         <p>Stay Healthy ❤️</p>
       `,
     });
 
     console.log("✅ Email Sent Successfully");
-    console.log(info);
+    console.log(result);
 
     return true;
 
@@ -70,10 +55,13 @@ const sendReminderEmail = async (
 
     console.error("❌ Email Sending Failed");
 
-    console.error(error);
+    if (error.response) {
+      console.error(error.response.body);
+    } else {
+      console.error(error);
+    }
 
     return false;
-
   }
 };
 
