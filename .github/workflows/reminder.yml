@@ -1,0 +1,17 @@
+name: Medicine Reminder
+
+on:
+  schedule:
+    - cron: "* * * * *"
+
+  workflow_dispatch:
+
+jobs:
+  reminder:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Reminder API
+
+        run: |
+          curl https://medicine-reminder-backend-0k9i.onrender.com/api/reminders/run
