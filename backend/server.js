@@ -13,7 +13,8 @@ const alertRoutes = require("./routes/alertRoutes");
 const cron = require("node-cron");
 
 const checkExpiryReminders = require("./services/expiryReminderService");
-const startReminderScheduler = require("./jobs/reminderScheduler");
+// const startReminderScheduler = require("./jobs/reminderScheduler");
+const reminderRoutes = require("./routes/reminderRoutes");
 const pharmacyRoutes = require("./routes/pharmacyRoutes");
 // const checkMedicineReminders =
 // require("./services/reminderScheduler");
@@ -34,18 +35,7 @@ cron.schedule(
 
   }
 );
-// cron.schedule(
-//   "* * * * *",
-//   async () => {
 
-//     console.log(
-//       "Checking Medicine Reminders..."
-//     );
-
-//     await checkMedicineReminders();
-
-//   }
-// );
 
 const app = express();
 
@@ -80,6 +70,10 @@ app.use(
   "/api/pharmacies",
   pharmacyRoutes
 );
+app.use(
+  "/api/reminders",
+  reminderRoutes
+);
 app.get("/", (req, res) => {
 
   res.send(
@@ -93,7 +87,7 @@ app.get("/", (req, res) => {
 */
 
 startExpiryChecker();
-startReminderScheduler();
+// startReminderScheduler();
 
 const PORT =
   process.env.PORT || 5000;
