@@ -45,27 +45,39 @@ const checkMedicineReminders = async () => {
       console.log("Duration:", medicine.duration);
 
       // No reminder times
-      if (
-        !medicine.reminderTimes ||
-        medicine.reminderTimes.length === 0
-      ) {
+      // Check if any reminder is within the last 5 minutes
 
-        console.log("❌ No reminder times");
+if (!medicine.reminderTimes || medicine.reminderTimes.length === 0) {
+  console.log("❌ No reminder times");
+  continue;
+}
 
-        continue;
-      }
+const currentMinutes =
+  now.getHours() * 60 + now.getMinutes();
 
-      // Current time doesn't match
-      if (
-        !medicine.reminderTimes.includes(currentTime)
-      ) {
+const matchedReminder = medicine.reminderTimes.find((time) => {
 
-        console.log("❌ Time does not match");
+  const [hour, minute] = time
+    .split(":")
+    .map(Number);
 
-        continue;
-      }
+  const reminderMinutes =
+    hour * 60 + minute;
 
-      console.log("✅ Time matched");
+  const difference =
+    currentMinutes - reminderMinutes;
+
+  return difference >= 0 && difference <= 5;
+});
+
+if (!matchedReminder) {
+  console.log("❌ Time does not match");
+  continue;
+}
+
+console.log(
+  `✅ Reminder matched (${matchedReminder})`
+);
 
       // Start Date
       const startDate = new Date(
@@ -106,7 +118,7 @@ const checkMedicineReminders = async () => {
       // Prevent duplicate reminders
 
       const reminderKey =
-        `${today.toDateString()}-${currentTime}`;
+`${today.toDateString()}-${matchedReminder}`;
 
       if (
         medicine.lastReminderSent === reminderKey
