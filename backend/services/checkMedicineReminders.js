@@ -10,89 +10,77 @@ const {
 } = require("./pushNotificationService");
 
 const checkMedicineReminders = async () => {
-
   try {
-
-    // Indian Time
+    // Indian Standard Time
     const now = new Date(
       new Date().toLocaleString("en-US", {
         timeZone: "Asia/Kolkata",
       })
     );
 
-    const currentTime =
-      `${String(now.getHours()).padStart(2, "0")}:${String(
-        now.getMinutes()
-      ).padStart(2, "0")}`;
+    const currentTime = `${String(now.getHours()).padStart(
+      2,
+      "0"
+    )}:${String(now.getMinutes()).padStart(2, "0")}`;
 
     const today = new Date(now);
     today.setHours(0, 0, 0, 0);
 
     console.log(
-      `Checking Medicine Reminders... ${currentTime}`
+      `Checking Medicine Reminders at ${currentTime}`
     );
 
-    const medicines =
-      await Medicine.find();
+    const medicines = await Medicine.find();
 
     for (const medicine of medicines) {
 
-      console.log("--------------------------------");
-      console.log("Medicine:", medicine.medicineName);
-      console.log("Reminder Times:", medicine.reminderTimes);
-      console.log("Current Time:", currentTime);
-      console.log("Start Date:", medicine.startDate);
-      console.log("Duration:", medicine.duration);
+      // Skip medicines without reminder times
+      if (
+        !medicine.reminderTimes ||
+        medicine.reminderTimes.length === 0
+      ) {
+        continue;
+      }
 
-      // No reminder times
-      // Check if any reminder is within the last 5 minutes
+      // Find reminder within last 5 minutes
+      const currentMinutes =
+        now.getHours() * 60 + now.getMinutes();
 
-if (!medicine.reminderTimes || medicine.reminderTimes.length === 0) {
-  console.log("❌ No reminder times");
-  continue;
-}
+      const matchedReminder =
+        medicine.reminderTimes.find((time) => {
+          const [hour, minute] = time
+            .split(":")
+            .map(Number);
 
-const currentMinutes =
-  now.getHours() * 60 + now.getMinutes();
+          const reminderMinutes =
+            hour * 60 + minute;
 
-const matchedReminder = medicine.reminderTimes.find((time) => {
+          const difference =
+            currentMinutes - reminderMinutes;
 
-  const [hour, minute] = time
-    .split(":")
-    .map(Number);
+          return (
+            difference >= 0 &&
+            difference <= 5
+          );
+        });
 
-  const reminderMinutes =
-    hour * 60 + minute;
+      if (!matchedReminder) {
+        continue;
+      }
 
-  const difference =
-    currentMinutes - reminderMinutes;
-
-  return difference >= 0 && difference <= 5;
-});
-
-if (!matchedReminder) {
-  console.log("❌ Time does not match");
-  continue;
-}
-
-console.log(
-  `✅ Reminder matched (${matchedReminder})`
-);
-
-      // Start Date
+      // Medicine active dates
       const startDate = new Date(
         medicine.startDate + "T00:00:00"
       );
 
       startDate.setHours(0, 0, 0, 0);
 
-      // End Date
       const endDate = new Date(startDate);
 
       endDate.setDate(
         endDate.getDate() +
-        Number(medicine.duration) -
-        1
+          Number(medicine.duration) -
+          1
       );
 
       endDate.setHours(
@@ -106,76 +94,45 @@ console.log(
         today < startDate ||
         today > endDate
       ) {
-
-        console.log("❌ Medicine not active");
-
         continue;
-
       }
 
-      console.log("✅ Medicine is active");
-
       // Prevent duplicate reminders
-
-      const reminderKey =
-`${today.toDateString()}-${matchedReminder}`;
+      const reminderKey = `${today.toDateString()}-${matchedReminder}`;
 
       if (
         medicine.lastReminderSent === reminderKey
       ) {
-
-        console.log("⏩ Already sent");
-
         continue;
-
       }
 
-      const user =
-        await User.findById(
-          medicine.user
-        );
+      const user = await User.findById(
+        medicine.user
+      );
 
       if (!user) {
-
-        console.log("❌ User not found");
-
         continue;
-
       }
 
-      // Email
-
+      // Email Reminder
       if (user.emailReminders) {
-
-        console.log(
-          `📧 Sending Email to ${user.email}`
-        );
-
         await sendReminderEmail(
           user.email,
           medicine.medicineName,
           medicine.dosage
         );
-
       }
 
       // Push Notification
-
       if (
         user.pushNotifications &&
         user.fcmToken
       ) {
-
-        console.log(
-          "📱 Sending Push Notification"
-        );
-
         await sendPushNotification(
           user.fcmToken,
           "Medicine Reminder 💊",
           `Time to take ${medicine.medicineName} (${medicine.dosage})`
         );
-
       }
 
       medicine.lastReminderSent =
@@ -184,24 +141,19 @@ console.log(
       await medicine.save();
 
       console.log(
-        `✅ Reminder sent for ${medicine.medicineName}`
+        `Reminder sent -> ${medicine.medicineName} (${matchedReminder})`
       );
-
     }
 
-    console.log("✅ Reminder Check Completed");
-
-  }
-
-  catch (error) {
-
+    console.log(
+      "Reminder Check Completed"
+    );
+  } catch (error) {
     console.log(
       "Reminder Service Error:",
-      error
+      error.message
     );
-
   }
-
 };
 
 module.exports = checkMedicineReminders;
