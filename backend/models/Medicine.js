@@ -48,18 +48,34 @@ const medicineSchema = new mongoose.Schema(
       default: [],
     },
     lastReminderSent: {
-  type: String,
-  default: "",
-},
+      type: String,
+      default: "",
+    },
     expiryNotified7Days: {
-  type: Boolean,
-  default: false,
-},
+      type: Boolean,
+      default: false,
+    },
 
-expiryNotifiedExpired: {
-  type: Boolean,
-  default: false,
-},
+    expiryNotifiedExpired: {
+      type: Boolean,
+      default: false,
+    },
+
+    // New staged expiry notification flags
+    expiryNotified2Days: {
+      type: Boolean,
+      default: false,
+    },
+
+    expiryNotified1Day: {
+      type: Boolean,
+      default: false,
+    },
+
+    expiryNotified0Day: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

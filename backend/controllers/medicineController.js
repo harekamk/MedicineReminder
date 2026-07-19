@@ -36,6 +36,12 @@ const addMedicine = async (req, res) => {
       expiryNotified7Days: false,
 
       expiryNotifiedExpired: false,
+
+      expiryNotified2Days: false,
+
+      expiryNotified1Day: false,
+
+      expiryNotified0Day: false,
     });
 
     res.status(201).json(medicine);
@@ -167,6 +173,15 @@ const updateMedicine = async (req, res) => {
       false;
 
     medicine.expiryNotifiedExpired =
+      false;
+
+    medicine.expiryNotified2Days =
+      false;
+
+    medicine.expiryNotified1Day =
+      false;
+
+    medicine.expiryNotified0Day =
       false;
 
     await medicine.save();
