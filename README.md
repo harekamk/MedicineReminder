@@ -280,9 +280,8 @@ Users can also use the **📍 Nearby Pharmacy Locator** to find pharmacies aroun
 
 ### ⏰ Medicine Reminders
 
-```md
-![Medicine Reminders](screenshots/reminders.png)
-```
+<img width="717" height="981" alt="0e1723e4-3507-4376-8619-39e91724efeb" src="https://github.com/user-attachments/assets/27a3dbfb-0ac3-4494-a4dd-cc60b2816526" />
+
 
 ### 📍 Nearby Pharmacy Locator
 
