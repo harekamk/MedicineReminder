@@ -270,13 +270,16 @@ Users can also use the **📍 Nearby Pharmacy Locator** to find pharmacies aroun
 
 ## 📸 Screenshots
 
-> Add screenshots of your application here to make the repository more attractive to recruiters.
-
 ### 🏠 Dashboard
 
-```md
-![Dashboard](screenshots/dashboard.png)
-```
+<img width="1876" height="872" alt="Screenshot 2026-09-04 223937" src="https://github.com/user-attachments/assets/3db89cdf-062d-4c1b-beb3-9a62574ca341" />
+
+💊 Medicine Management
+![Medicine Management](screenshots/medicine-management.png)
+⏰ Medicine Reminders
+![Medicine Reminders](screenshots/reminders.png)
+📍 Nearby Pharmacy Locator
+![Pharmacy Locator](screenshots/pharmacy-locator.png)
 
 ### 💊 Medicine Management
 
