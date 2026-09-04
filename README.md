@@ -272,20 +272,11 @@ Users can also use the **📍 Nearby Pharmacy Locator** to find pharmacies aroun
 
 ### 🏠 Dashboard
 
-<img width="1876" height="872" alt="Screenshot 2026-09-04 223937" src="https://github.com/user-attachments/assets/3db89cdf-062d-4c1b-beb3-9a62574ca341" />
-
-💊 Medicine Management
-![Medicine Management](screenshots/medicine-management.png)
-⏰ Medicine Reminders
-![Medicine Reminders](screenshots/reminders.png)
-📍 Nearby Pharmacy Locator
-![Pharmacy Locator](screenshots/pharmacy-locator.png)
+<img width="1901" height="863" alt="Screenshot 2026-07-20 181354" src="https://github.com/user-attachments/assets/f07b8637-a6fc-4e12-b3e0-92de6535aa8a" />
 
 ### 💊 Medicine Management
 
-```md
-![Medicine Management](screenshots/medicine-management.png)
-```
+<img width="1877" height="833" alt="Screenshot 2026-09-04 224633" src="https://github.com/user-attachments/assets/e76f43ed-a6cf-441f-8f62-67264b06c345" />
 
 ### ⏰ Medicine Reminders
 
@@ -295,9 +286,7 @@ Users can also use the **📍 Nearby Pharmacy Locator** to find pharmacies aroun
 
 ### 📍 Nearby Pharmacy Locator
 
-```md
-![Pharmacy Locator](screenshots/pharmacy-locator.png)
-```
+<img width="1502" height="847" alt="Screenshot 2026-09-04 224437" src="https://github.com/user-attachments/assets/9b1bb4ae-d093-438b-a204-ddc5ca190a86" />
 
 ---
 
@@ -332,9 +321,3 @@ Your support is appreciated. 💙
 🚀 Full-Stack Developer | AI/ML Enthusiast
 
 ---
-
-### ⭐ Project Links
-
-🚀 **[Live Demo](https://medicine-reminder-frontend.netlify.app/)**
-
-💻 **[View Source Code on GitHub](https://github.com/harekamk/MedicineReminder)**
